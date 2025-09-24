@@ -1,0 +1,14 @@
+image: hugomods/hugo:exts
+test:
+  script:
+    - hugo --minify
+  rules:
+    - if: $CI_COMMIT_REF_NAME != $CI_DEFAULT_BRANCH
+# Run only on the default branch
+create-pages:
+  stage: deploy
+  script:
+    - hugo --minify
+  pages: true
+  rules:
+    - if: $CI_COMMIT_REF_NAME == $CI_DEFAULT_BRANCH
