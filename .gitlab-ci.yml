@@ -1,14 +1,23 @@
-image: hugomods/hugo:exts
-test:
+
+# The Docker image that will be used to build your app
+image: debian:bullseye-slim
+# Functions that should be executed before the build script is run
+before_script:
+  - apt-get update && apt-get install -y wget
+  - wget
+    https://github.com/gohugoio/hugo/releases/download/v0.145.0/hugo_extended_0.145.0_linux-amd64.deb
+  - dpkg -i hugo_extended_0.145.0_linux-amd64.deb
+  - ls -la
+pages:
   script:
-    - hugo --minify
+    - pwd
+    - ls -la
+    - hugo
+  artifacts:
+    paths:
+      # The folder that contains the files to be exposed at the Page URL
+      - public
   rules:
-    - if: $CI_COMMIT_REF_NAME != $CI_DEFAULT_BRANCH
-# Run only on the default branch
-create-pages:
-  stage: deploy
-  script:
-    - hugo --minify
-  pages: true
-  rules:
+    # This ensures that only pushes to the default branch will trigger
+    # a pages deploy
     - if: $CI_COMMIT_REF_NAME == $CI_DEFAULT_BRANCH
